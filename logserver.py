@@ -1,14 +1,18 @@
-from bottle import route, run, request, response
+from bottle import route, run, request, response, template, TEMPLATE_PATH, static_file, get
 from datetime import datetime as dt
 import json
 import os
 
 CONFIG = dict()
 
+# don't know why we need this fix. bottle can't find the correct path...
+TEMPLATE_PATH.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'views')))
+
 
 @route('/')
 def index():
-    return "Hello World"
+    print()
+    return template('index')
 
 
 @route('/ping')
@@ -77,6 +81,11 @@ def save(payload):
 
     with open(CONFIG.get('logfile'), 'w') as logfile:
         json.dump(logs, logfile, indent=4)
+
+
+@get('/vendor/<filename>')
+def vendor(filename):
+    return static_file(filename=filename, root="vendor")
 
 
 if __name__ == '__main__':

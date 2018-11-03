@@ -5,9 +5,15 @@
     <title>Omega Base Station</title>
 
     <link rel="stylesheet" href="/vendor/bootstrap.min.css">
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body class="w-100 h-100 bg-dark">
-<div class="container h-100">
+<div class="container h-100 bg-light">
     <div class="jumbotron">
         <h1>Omega Base Station</h1>
         <p>This is the main configuration and management page of Omega Base

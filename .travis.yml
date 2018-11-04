@@ -20,4 +20,4 @@ deploy:
   file:
     - /tmp/omega-logserver.tar.gz
   on:
-    branch: master
+    tags: true

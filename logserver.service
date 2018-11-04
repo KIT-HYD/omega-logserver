@@ -1,0 +1,14 @@
+[Unit]
+Description=Bottle based logging server for Onion Omega
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+User=root
+PermissionsStartOnly=true
+WorkingDirectory=/root/omega-logserver
+ExecStart=python3 /root/omega-logserver/logserver.py
+TimeoutSec=800
+Restart=on-failure
+RuntimeDirectoryMode=755

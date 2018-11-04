@@ -92,8 +92,14 @@ def save(payload):
     else:
         logs = list()
 
+    # append the new device
+    device = parse_device(payload=payload)
+    device_journal(new_device=device)
+    if 'dev' in payload:
+        del payload['dev']
+
     # build the log; TODO: put more metadata here...
-    log = dict(time=str(dt.utcnow()), payload=payload)
+    log = dict(time=str(dt.utcnow()), dev=device, payload=payload)
 
     # append new data
     logs.append(log)
@@ -102,9 +108,19 @@ def save(payload):
         json.dump(logs, logfile, indent=4)
 
 
-def device_journal(new_device):
+def parse_device(payload):
+    device = payload.get('dev', dict())
+    dev_ip = request.remote_addr
+    dev_id = device.get('dev_id', dev_ip)
+    last = str(dt.utcnow())
+    device.update(dict(dev_ip=dev_ip, dev_id=dev_id, last_connection=last))
+
+    return device
+
+
+def device_journal(new_device=None):
     # load the journal
-    if not os.path.exists('device_journal'):
+    if not os.path.exists('device_journal.json'):
         devices = dict()
     else:
         with open('device_journal.json', 'r') as jrn:
@@ -116,9 +132,9 @@ def device_journal(new_device):
 
     # update
     else:
-        devices.update(new_device)
+        devices.update({new_device['dev_id']: new_device})
         with open('device_journal.json', 'w') as jrn:
-            json.dump(devices)
+            json.dump(devices, jrn, indent=4)
 
 
 @get('/vendor/<filename>')

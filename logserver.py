@@ -4,9 +4,10 @@ import json
 import os
 
 CONFIG = dict()
+BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
 # don't know why we need this fix. bottle can't find the correct path...
-TEMPLATE_PATH.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'views')))
+TEMPLATE_PATH.insert(0, os.path.join(BASE_PATH, 'views'))
 
 
 @route('/')
@@ -46,7 +47,7 @@ def log():
 def logs():
     if not os.path.exists(CONFIG.get('logfile')):
         response.status = 405
-        return "405"
+        return {'found': 0, 'total': 0, 'logs': []}
     else:
         with open(CONFIG.get('logfile')) as logfile:
             logs = json.load(logfile)
@@ -148,6 +149,7 @@ def static(filename):
 
 
 if __name__ == '__main__':
+    os.chdir(BASE_PATH)
     CONFIG = config()
 
     run(host=CONFIG.get('host_ip'), port='5555', debug=True)

@@ -11,7 +11,7 @@ script:
   - cp config.json.default config.json
 
   # create the zip
-  - tar --exclude=".git" -zcvf omega-logserver.tar.gz
+  - tar --exclude=".git" -zcvf /tmp/omega-logserver.tar.gz .
 
 deploy:
   provider: releases

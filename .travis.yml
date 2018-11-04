@@ -1,0 +1,25 @@
+language: python
+python: 3.6
+
+cache: pip
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  # create the missing files
+  - cd omega-logserver
+  - cp config.json.default config.json
+
+  # create the zip
+  - cd ..
+  - tar  -zcvf omega-logserver.tar.gz omega-logserver
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  skip_cleanup: true
+  file:
+    - "omega-logserver.tar.gz"
+  on:
+    branch: master

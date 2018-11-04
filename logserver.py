@@ -11,8 +11,8 @@ TEMPLATE_PATH.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 
 
 @route('/')
 def index():
-    print()
-    return template('index')
+    return static('index.html')
+#    return template('index')
 
 
 @route('/ping')
@@ -53,8 +53,8 @@ def logs():
 
     # get max and sort parameter
     total = len(logs)
-    asc = request.params.get('asc', False)
-    max_logs = request.params.get('max', total)
+    asc = bool(request.params.get('asc', False))
+    max_logs = int(request.params.get('max', total))
 
     # sorting
     ts = [dt.fromisoformat(log['time']).timestamp() for log in logs]
@@ -140,6 +140,11 @@ def device_journal(new_device=None):
 @get('/vendor/<filename>')
 def vendor(filename):
     return static_file(filename=filename, root="vendor")
+
+
+@get('/static/<filename>')
+def static(filename):
+    return static_file(filename=filename, root="views")
 
 
 if __name__ == '__main__':

@@ -26,13 +26,13 @@
     </div>
 
     <div class="row">
-        <div class="col col-md-6">
+        <div class="col col-lg-6 col-12">
             <h3>connected devices</h3>
             <div class="well p-3">
 
             </div>
         </div>
-        <div class="col col-md-6">
+        <div class="col col-lg-6 col-12">
             <h3>recent payload</h3>
             <div class="well p-3">
 

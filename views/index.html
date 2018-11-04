@@ -24,22 +24,35 @@
             are connected WiFi enabled sensors. The data transmission shall
             be possible by hand, LoRaWAN (TTN), GSM or WiFi one day.
         </p>
-        <p>
+        <!--<h4>
             <div class="badge badge-success">device name: <div class="badge badge-light">{{ dev_name }}</div></div>
             <div class="badge badge-success">software version: <div class="badge badge-light">{{ dev_version }}</div></div>
             <div class="badge badge-info">device IP: <div class="badge badge-light">{{ dev_ip }}</div></div>
             <div class="badge badge-success">connected devices: <div class="badge badge-light">{{ devicesCount }}</div></div>
-            <div class="badge"></div>
+        </h4>-->
+        <p class="mt-5">
+            <shield v-bind:opt="{name:'Device name',value:dev_name, color:'bg-success'}"></shield>
+            <shield
+                    v-bind:opt="{name:'Software version',value:dev_version, color:'bg-success'}"></shield>
+            <shield
+                    v-bind:opt="{name:'Device IP',value:dev_ip, color:'bg-info'}"></shield>
+            <shield
+                    v-bind:opt="{name:'Sensors found',value:devicesCount, color:'bg-success'}"></shield>
         </p>
     </div>
 
     <div class="row">
         <div class="col col-lg-6 col-12">
-            <h3>connected devices</h3>
+            <h3>connected sensors</h3>
+            <button class="btn btn-outline-primary" @click="loadDevices()">refresh</button>
+            <button class="btn btn-outline-danger" @click="devices = []">clear</button>
             <device-item v-for="device in devices" v-bind:device="device"></device-item>
         </div>
+
         <div class="col col-lg-6 col-12">
-            <h3>recent payload</h3>
+            <h3>last payload</h3>
+            <button class="btn btn-outline-primary" @click="loadLastPayload(5)">refresh</button>
+            <button class="btn btn-outline-danger" @click="lastPayload= ''">clear</button>
             <payload-preview v-bind:payload="lastPayload" class="w-100" style="height: 500px;"></payload-preview>
         </div>
     </div>
@@ -61,6 +74,12 @@ Vue.component('payload-preview', {
     template: '<textarea class="bg-light card p-3">{{ payload }}</textarea>'
 });
 
+Vue.component('shield', {
+    props: ['opt'],
+    template:
+        '<span><span class="bg-dark p-2 my-4 rounded-left text-light">{{ opt.name }}</span><span class="p-2 my-4 rounded-right" :class="opt.color">{{ opt.value }}</span></span>'
+});
+
 var app = new Vue({
     el: '#app',
     data: {
@@ -75,20 +94,28 @@ var app = new Vue({
             return this.devices.length;
         }
     },
+    methods: {
+        loadDevices: function() {
+            fetch('/devices').then(response => response.json())
+                .then(json => {
+                    this.devices = json.devices;
+                });
+        },
+        loadLastPayload: function(max= 5) {
+            fetch('/logs?max=' + max).then(response => response.json())
+                .then(json => {
+                    this.lastPayload = json.logs;
+                });
+        },
+        refresh: function() {
+            this.loadDevices();
+            this.loadLastPayload(5);
+        }
+    },
+    ready: function() {
+      this.loadDevices();
+    },
     created() {
-        // get the devices
-        fetch('/devices').then(response => response.json())
-            .then(json => {
-                this.devices = json.devices;
-            });
-
-        // get the last 5 logs
-        fetch('/logs?max=5').then(response => response.json()
-            .then(json => {
-               this.lastPayload = json.logs;
-            })
-        );
-
         // get general device info
         fetch('/describe').then(response => response.json())
             .then(json => {
@@ -97,6 +124,12 @@ var app = new Vue({
                 this.dev_ip = json.host_ip;
                 this.dev_version = json.host_version;
             });
+
+        // refresh page
+        this.refresh();
+
+        // set interval
+        setInterval(this.refresh, 60000);
     }
 });
 </script>

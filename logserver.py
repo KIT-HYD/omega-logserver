@@ -5,6 +5,7 @@ import os
 
 CONFIG = dict()
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+DTFMT = '%Y-%m-%d %H:%M:%S.%f'
 
 # don't know why we need this fix. bottle can't find the correct path...
 TEMPLATE_PATH.insert(0, os.path.join(BASE_PATH, 'views'))
@@ -70,7 +71,7 @@ def logs():
     max_logs = int(request.params.get('max', total))
 
     # sorting
-    ts = [dt.fromisoformat(log['time']).timestamp() for log in logs]
+    ts = [dt.strptime(log['time'], DTFMT).timestamp() for log in logs]
     logs = [logs[i] for i in [ts.index(_) for _ in sorted(ts, reverse=~asc)]]
 
     # limit the logs

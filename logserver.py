@@ -31,6 +31,18 @@ def acknowledge():
     return "1", 200
 
 
+@route('/describe')
+def describe():
+    with open('VERSION') as v:
+        version = v.read().strip()
+
+    return dict(
+        dev_id=CONFIG.get('dev_id'),
+        host_ip=CONFIG.get('host_ip'),
+        host_version=version
+    )
+
+
 @route('/log', method=['POST', 'PUT'])
 def log():
     data = request.json
@@ -71,7 +83,7 @@ def logs():
 def devices():
     devices = device_journal()
 
-    return {'found': len(devices.keys()), 'devices': devices}
+    return {'found': len(devices.keys()), 'devices': [devices[dev_id] for dev_id in devices.keys()]}
 
 
 def config(new_config=None):

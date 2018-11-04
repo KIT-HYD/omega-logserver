@@ -71,3 +71,38 @@ Omega network and point a browser to ``http://192.168.3.1:5555``. In case your
 omega is also connected to your home network, you can change the setting to the
 local address of that network, this is however not recommended as there is no
 security layer implemented into this package.
+
+Service
+-------
+
+There is also an ``procd`` file in the repository. That file can be copied to
+``/etc/init.d/logserver`` to create a ``logserver`` service.
+
+.. code-block:: bash
+
+    cd omega-logserver
+    cp logserver /etc/init.d/logserver
+    chmod +x /etc/init.d/logserver
+
+Now, you can manually start and stop the logserver
+
+.. code-block:: bash
+
+    service logserver start
+    service logserver stop
+
+If you want the logserver to automatically start at system startup, you can enable
+the service
+
+.. code-block:: bash
+
+    service logserver enable
+
+This will start the service on next system boot.
+
+
+.. important::
+
+    The procd service assumes that you are using the python3 interpreter and
+    have the repository at ``/root/omega-logserver/``. In case you change this
+    location, you'll have to adjust the service file.

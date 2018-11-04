@@ -24,6 +24,13 @@
             are connected WiFi enabled sensors. The data transmission shall
             be possible by hand, LoRaWAN (TTN), GSM or WiFi one day.
         </p>
+        <p>
+            <div class="badge badge-success">device name: <div class="badge badge-light">{{ dev_name }}</div></div>
+            <div class="badge badge-success">software version: <div class="badge badge-light">{{ dev_version }}</div></div>
+            <div class="badge badge-info">device IP: <div class="badge badge-light">{{ dev_ip }}</div></div>
+            <div class="badge badge-success">connected devices: <div class="badge badge-light">{{ devicesCount }}</div></div>
+            <div class="badge"></div>
+        </p>
     </div>
 
     <div class="row">
@@ -58,18 +65,38 @@ var app = new Vue({
     el: '#app',
     data: {
         devices: [],
-        lastPayload: ''
+        lastPayload: '',
+        dev_name: 'UNKOWN',
+        dev_ip: '0.0.0.0',
+        dev_version: 'XX'
+    },
+    computed: {
+        devicesCount: function () {
+            return this.devices.length;
+        }
     },
     created() {
+        // get the devices
         fetch('/devices').then(response => response.json())
             .then(json => {
                 this.devices = json.devices;
             });
+
+        // get the last 5 logs
         fetch('/logs?max=5').then(response => response.json()
             .then(json => {
                this.lastPayload = json.logs;
             })
         );
+
+        // get general device info
+        fetch('/describe').then(response => response.json())
+            .then(json => {
+                console.log(json);
+                this.dev_name = json.dev_id;
+                this.dev_ip = json.host_ip;
+                this.dev_version = json.host_version;
+            });
     }
 });
 </script>

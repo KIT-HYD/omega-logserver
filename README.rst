@@ -54,6 +54,7 @@ Clone the repo:
 
     git clone https://github.com/kit-hyd/omega-logserver.git
     cd omega-logserver
+    pip install -r requirements.txt
     cp config.json.default config.json
 
 And then start the server:

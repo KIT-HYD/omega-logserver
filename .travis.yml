@@ -18,6 +18,6 @@ deploy:
   api_key: $GITHUB_TOKEN
   skip_cleanup: true
   file:
-    - omega-logserver.tar.gz
+    - /tmp/omega-logserver.tar.gz
   on:
     branch: master

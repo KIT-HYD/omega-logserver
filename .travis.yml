@@ -11,15 +11,13 @@ script:
   - cp config.json.default config.json
 
   # create the zip
-  - cd ..
-  - tar --exclude="omega-logserver/.git/" -zcvf omega-logserver.tar.gz omega-logserver
-  - cd omega-logserver
+  - tar --exclude=".git" -zcvf omega-logserver.tar.gz
 
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
   skip_cleanup: true
   file:
-    - "omega-logserver.tar.gz"
+    - omega-logserver.tar.gz
   on:
     branch: master

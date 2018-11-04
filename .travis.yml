@@ -8,12 +8,11 @@ install:
 
 script:
   # create the missing files
-  - cd omega-logserver
   - cp config.json.default config.json
 
   # create the zip
   - cd ..
-  - tar  -zcvf omega-logserver.tar.gz omega-logserver
+  - tar --exclude="./.git" -zcvf omega-logserver.tar.gz omega-logserver
 
 deploy:
   provider: releases

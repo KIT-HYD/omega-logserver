@@ -51,7 +51,26 @@ def logs():
         with open(CONFIG.get('logfile')) as logfile:
             logs = json.load(logfile)
 
-    return {'found': len(logs), 'logs': logs}
+    # get max and sort parameter
+    total = len(logs)
+    asc = request.params.get('asc', False)
+    max_logs = request.params.get('max', total)
+
+    # sorting
+    ts = [dt.fromisoformat(log['time']).timestamp() for log in logs]
+    logs = [logs[i] for i in [ts.index(_) for _ in sorted(ts, reverse=~asc)]]
+
+    # limit the logs
+    logs = logs[:max_logs]
+
+    return {'found': len(logs), 'total': total, 'logs': logs}
+
+
+@route('/devices', method=['GET'])
+def devices():
+    devices = device_journal()
+
+    return {'found': len(devices.keys()), 'devices': devices}
 
 
 def config(new_config=None):
@@ -81,6 +100,25 @@ def save(payload):
 
     with open(CONFIG.get('logfile'), 'w') as logfile:
         json.dump(logs, logfile, indent=4)
+
+
+def device_journal(new_device):
+    # load the journal
+    if not os.path.exists('device_journal'):
+        devices = dict()
+    else:
+        with open('device_journal.json', 'r') as jrn:
+            devices = json.load(jrn)
+
+    # return if needed
+    if new_device is None:
+        return devices
+
+    # update
+    else:
+        devices.update(new_device)
+        with open('device_journal.json', 'w') as jrn:
+            json.dump(devices)
 
 
 @get('/vendor/<filename>')

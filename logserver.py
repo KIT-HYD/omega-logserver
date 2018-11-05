@@ -29,7 +29,7 @@ def dev_id():
 
 @route('/acknowledge')
 def acknowledge():
-    return "1", 200
+    return "1"
 
 
 @route('/describe')
